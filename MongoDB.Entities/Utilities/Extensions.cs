@@ -4,6 +4,7 @@ using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using MongoDB.Entities.Core;
+using MongoDB.Entities.Relationships;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -358,6 +359,13 @@ namespace MongoDB.Entities
             if ((hasOwnerAttrib == osHasOwnerAttrib) || (hasInverseAttrib == osHasInverseAttrib)) throw new InvalidOperationException("Both sides of the relationship cannot have the same attribute");
 
             property.SetValue(parent, new Many<TChild>(parent, property.Name, osProperty.Name, hasInverseAttrib));
+        }
+
+        //todo: xml docs
+        public static void InitMultiple<T>(this IEntity parent, Expression<Func<Multiple<T>>> propertyToInit) where T : IEntity, new()
+        {
+            var property = (PropertyInfo)((MemberExpression)propertyToInit.Body).Member;
+            property.SetValue(parent, new Multiple<T>(parent, property.Name));
         }
     }
 }

@@ -407,5 +407,30 @@ namespace MongoDB.Entities.Tests
 
             Assert.AreEqual(0, count);
         }
+
+        [TestMethod]
+        public void add_child_to_multiple_prop()
+        {
+            var guid = Guid.NewGuid().ToString();
+
+            var book = new Book { Title = guid };
+            book.Save();
+
+            var a1 = new Author { FullName = guid };
+            var a2 = new Author { FullName = guid };
+            var a3 = new Author { FullName = guid };
+
+            new[] { a1, a2, a3 }.Save();
+
+            book.Authors.Add(a1);
+            book.Authors.Add(a2);
+            book.Authors.Add(a3);
+
+            var res = DB.Find<Author>()
+                        .Many(f => f.Eq($"_ref_{book.GetType().Name}-{nameof(book.Authors)}", book.ID) &
+                                   f.Eq(a => a.FullName, guid));
+
+            Assert.AreEqual(3, res.Count);
+        }
     }
 }

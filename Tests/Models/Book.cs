@@ -1,5 +1,6 @@
 ﻿
 using MongoDB.Entities.Core;
+using MongoDB.Entities.Relationships;
 using System.Collections.Generic;
 
 namespace MongoDB.Entities.Tests
@@ -26,6 +27,8 @@ namespace MongoDB.Entities.Tests
         [OwnerSide]
         public Many<Genre> Genres { get; set; }
 
+        public Multiple<Author> Authors { get; set; }
+
         [Ignore]
         public int DontSaveThis { get; set; }
 
@@ -34,6 +37,8 @@ namespace MongoDB.Entities.Tests
             this.InitOneToMany(() => GoodAuthors);
             this.InitOneToMany(() => BadAuthors);
             this.InitManyToMany(() => Genres, g => g.Books);
+
+            this.InitMultiple(() => Authors);
         }
 
     }
